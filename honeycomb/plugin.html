@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Honeycomb plugin</title>
+</head>
+
+<body>
+  <div class="container" id="container">
+    Link to Honeycomb
+  </div>
+  <!-- MetaflowPluginAPI.js Must be used to register plugin for the UI -->
+  <!-- REMEMBER TO UPDATE THIS LINK TO ACTUAL METAFLOW JS API FILE. Check README for more info -->
+  <script src="MetaflowPluginAPI.js"></script>
+  <script>
+    (function () {
+      Metaflow.subscribeToRunMetadata( (message) => {
+          console.log('run message: ', message)
+          const team = 'outerbounds'
+          const dataset = 'metaflow-tracing-test'
+          const trace_start_ts = message?.data?.[0]?.ts_epoch
+        document.getElementById('container').innerHTML = `http://ui.honeycomb.io/${team}/datasets/${dataset}/trace?trace_id=<traceId>
+  &trace_start_ts=${trace_start_ts}`;
+        })
+      // Execute plugin code on Metaflow.onReady to make sure that it has required configuration and resource info.
+      Metaflow.onReady((config, resource) => {
+        // Set fixed height for plugin
+        Metaflow.setHeight(40);
+
+        // Show run id from URL.
+        
+        console.log('resource_a: ', resource, 'config: ', config)
+
+      })
+    })();
+  </script>
+</body>
+
+</html>
