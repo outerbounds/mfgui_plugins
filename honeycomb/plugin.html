@@ -17,8 +17,8 @@
   <script src="MetaflowPluginAPI.js"></script>
   <script>
     (function () {
-      Metaflow.subscribeToRunMetadata( (message) => {
-          console.log('run message: ', message)
+      Metaflow.subscribeToMetadata( (message) => {
+          console.log('metadata message: ', message)
           const team = 'outerbounds'
           const dataset = 'metaflow-tracing-test'
           const trace_start_ts = message?.data?.[0]?.ts_epoch
