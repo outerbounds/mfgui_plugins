@@ -22,8 +22,8 @@
           const team = 'outerbounds'
           const dataset = 'metaflow-tracing-test'
           const trace_start_ts = message?.data?.[0]?.ts_epoch
-        document.getElementById('container').innerHTML = `http://ui.honeycomb.io/${team}/datasets/${dataset}/trace?trace_id=<traceId>
-  &trace_start_ts=${trace_start_ts}`;
+        document.getElementById('container').innerHTML = `<a href="http://ui.honeycomb.io/${team}/datasets/${dataset}/trace?trace_id=<traceId>
+  &trace_start_ts=${trace_start_ts}"><img src="logo.svg" alt="honeycomb.io"/></a>`;
         })
       // Execute plugin code on Metaflow.onReady to make sure that it has required configuration and resource info.
       Metaflow.onReady((config, resource) => {
