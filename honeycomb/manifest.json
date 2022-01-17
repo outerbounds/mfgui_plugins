@@ -1,5 +1,5 @@
 {
-  "name": "Honeycomb XYZ",
+  "name": "Link to Honeycomb",
   "version": "0.0.1",
   "entrypoint": "plugin.html",
   "slot": "run-header", 
