@@ -21,8 +21,9 @@
           console.log('metadata message: ', message)
           const team = 'outerbounds'
           const dataset = 'metaflow-tracing-test'
-          const trace_start_ts = message?.data?.[0]?.ts_epoch
-          const trace_id = message?.data?.[0]?.["otel-trace-id (trace-id)"]
+          const traceData = message?.data?.find(d => d.field_name === "otel-trace-id")
+          const trace_start_ts = traceData?.ts_epoch / 1000
+          const trace_id = traceData?.value
 
         document.getElementById('container').innerHTML = `<a href="http://ui.honeycomb.io/${team}/datasets/${dataset}/trace?trace_id=${trace_id}
   &trace_start_ts=${trace_start_ts}"><img src="logo.svg" alt="honeycomb.io"/></a>`;

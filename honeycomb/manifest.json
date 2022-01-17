@@ -3,5 +3,5 @@
   "version": "0.0.1",
   "entrypoint": "plugin.html",
   "slot": "task-details", 
-  "container": "titled-container"
+  "container": "collapsable"
 }
