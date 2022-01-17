@@ -1,7 +1,7 @@
 {
-  "name": "Link to Honeycomb",
+  "name": "Link to honeycomb.io analysis",
   "version": "0.0.1",
   "entrypoint": "plugin.html",
-  "slot": "run-header", 
+  "slot": "task-details", 
   "container": "titled-container"
 }
