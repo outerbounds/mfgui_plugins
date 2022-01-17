@@ -22,21 +22,18 @@
           const team = 'outerbounds'
           const dataset = 'metaflow-tracing-test'
           const traceData = message?.data?.find(d => d.field_name === "otel-trace-id")
-          const trace_start_ts = traceData?.ts_epoch / 1000
+          const trace_start_ts = Math.floor(traceData?.ts_epoch / 1000)
           const trace_id = traceData?.value
-
-        document.getElementById('container').innerHTML = `<a href="http://ui.honeycomb.io/${team}/datasets/${dataset}/trace?trace_id=${trace_id}
-  &trace_start_ts=${trace_start_ts}"><img src="logo.svg" alt="honeycomb.io"/></a>`;
+          if (trace_start_ts && trace_id) {
+            document.getElementById('container').innerHTML = `<a href="http://ui.honeycomb.io/${team}/datasets/${dataset}/trace?trace_id=${trace_id}&trace_start_ts=${trace_start_ts}"><img src="logo.svg" alt="honeycomb.io"/></a>`;
+          } else {
+            document.getElementById('container').innerHTML = "<p>No trace available</p>"
+          }
         })
       // Execute plugin code on Metaflow.onReady to make sure that it has required configuration and resource info.
       Metaflow.onReady((config, resource) => {
-        // Set fixed height for plugin
+        // Set height for plugin
         Metaflow.setHeight(80);
-
-        // Show run id from URL.
-        
-        console.log('resource_a: ', resource, 'config: ', config)
-
       })
     })();
   </script>
