@@ -25,7 +25,7 @@
           const trace_start_ts = Math.floor(traceData?.ts_epoch / 1000)
           const trace_id = traceData?.value
           if (trace_start_ts && trace_id) {
-            document.getElementById('container').innerHTML = `<a href="http://ui.honeycomb.io/${team}/datasets/${dataset}/trace?trace_id=${trace_id}&trace_start_ts=${trace_start_ts}"><img src="logo.svg" alt="honeycomb.io"/></a>`;
+            document.getElementById('container').innerHTML = `<a target="_blank" href="https://ui.honeycomb.io/${team}/datasets/${dataset}/trace?trace_id=${trace_id}&trace_start_ts=${trace_start_ts}"><img src="logo.svg" alt="honeycomb.io"/></a>`;
           } else {
             document.getElementById('container').innerHTML = "<p>No trace available</p>"
           }
