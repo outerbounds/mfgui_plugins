@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Run Plugin Debugger</title>
+</head>
+
+<body>
+  <div class="container" id="container">
+    Run Plugin Debugger
+  </div>
+  <!-- MetaflowPluginAPI.js Must be used to register plugin for the UI -->
+  <!-- REMEMBER TO UPDATE THIS LINK TO ACTUAL METAFLOW JS API FILE. Check README for more info -->
+  <script src="MetaflowPluginAPI.js"></script>
+  <script>
+    (function () {
+      Metaflow.subscribeToRunMetadata( (metadata) => {
+          console.log('run metadata: ', metadata)
+          document.getElementById('container').innerHTML = `<i>See console for metadata</i><pre>${JSON.stringify(metadata)}</pre>`
+        })
+      // Execute plugin code on Metaflow.onReady to make sure that it has required configuration and resource info.
+      Metaflow.onReady((config, resource) => {
+        // Set height for plugin
+        Metaflow.setHeight(100);
+        console.log('config: ', config, ' resource: ', resource)
+      })
+    })();
+  </script>
+</body>
+
+</html>
