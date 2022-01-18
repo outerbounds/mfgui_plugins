@@ -22,7 +22,8 @@
           const team = 'outerbounds'
           const dataset = 'metaflow-tracing-test'
           const traceData = message?.data?.find(d => d.field_name === "otel-trace-id")
-          const trace_start_ts = Math.floor(traceData?.ts_epoch / 1000)
+          // fudge factor of 500 so first spans are not excluded
+          const trace_start_ts = Math.floor(traceData?.ts_epoch/ 1000) - 500
           const trace_id = traceData?.value
           if (trace_start_ts && trace_id) {
             document.getElementById('container').innerHTML = `<a target="_blank" href="https://ui.honeycomb.io/${team}/datasets/${dataset}/trace?trace_id=${trace_id}&trace_start_ts=${trace_start_ts}"><img src="logo.svg" alt="honeycomb.io"/></a>`;
