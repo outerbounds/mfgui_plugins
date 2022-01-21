@@ -1,5 +1,5 @@
 {
-  "name": "Link to honeycomb.io analysis 5",
+  "name": "Link to honeycomb.io analysis",
   "version": "0.0.1",
   "entrypoint": "plugin.html",
   "slot": "task-details", 
