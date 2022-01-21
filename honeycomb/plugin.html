@@ -18,10 +18,9 @@
   <script>
     (function () {
       Metaflow.subscribeToMetadata( (message) => {
-          console.log('metadata message: ', message)
           const team = 'outerbounds'
           const dataset = 'metaflow-tracing-test'
-          const traceData = message?.data?.find(d => d.field_name === "otel-trace-id")
+          const traceData = message?.find(d => d.field_name === "otel-trace-id")
           // fudge factor of 500 so first spans are not excluded
           const trace_start_ts = Math.floor(traceData?.ts_epoch/ 1000) - 500
           const trace_id = traceData?.value
