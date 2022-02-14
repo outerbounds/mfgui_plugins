@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Batch plugin</title>
+  <style type="text/css">
+    a {
+      text-decoration: none;
+    }
+    img {
+      height: 32px;
+      vertical-align: bottom;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- MetaflowPluginAPI.js Must be used to register plugin for the UI -->
+  <!-- REMEMBER TO UPDATE THIS LINK TO ACTUAL METAFLOW JS API FILE. Check README for more info -->
+  <script src="MetaflowPluginAPI.js"></script>
+  <script>
+    (function () {
+      Metaflow.subscribeToMetadata( (metadata) => {
+        const region = metadata?.data?.["aws-batch-awslogs-region"];
+        const jobId = metadata?.data?.["aws-batch-job-id"];
+
+        if (region && jobId) {
+          const url = `https://${region}.console.aws.amazon.com/batch/home?region=${region}#jobs/detail/${jobId}`;
+          document.getElementById('container').innerHTML = `<a target="_blank" href="${url}"><img src="aws-batch.svg"/> AWS Batch Job (${jobId})</a>`;
+        } else {
+          document.getElementById('container').innerHTML = "<p>No AWS Batch information available</p>";
+        }
+      })
+      // Execute plugin code on Metaflow.onReady to make sure that it has required configuration and resource info.
+      Metaflow.onReady((config, resource) => {
+        // Set height for plugin
+        Metaflow.setHeight(80);
+      })
+    })();
+  </script>
+</body>
+
+</html>
