@@ -27,8 +27,8 @@
   <script>
     (function () {
       Metaflow.subscribeToMetadata( (metadata) => {
-        const region = metadata?.data?.["aws-batch-awslogs-region"];
-        const jobId = metadata?.data?.["aws-batch-job-id"];
+        const region = metadata?.["aws-batch-awslogs-region"];
+        const jobId = metadata?.["aws-batch-job-id"];
 
         if (region && jobId) {
           const url = `https://${region}.console.aws.amazon.com/batch/home?region=${region}#jobs/detail/${jobId}`;
