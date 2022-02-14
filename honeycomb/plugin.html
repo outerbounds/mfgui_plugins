@@ -18,7 +18,6 @@
   <script>
     (function () {
       Metaflow.subscribeToMetadata( (message) => {
-          console.log('in other branch')
           const team = 'outerbounds'
           const dataset = 'metaflow-tracing-test'
           const traceData = message?.data?.["otel-trace-id"]
