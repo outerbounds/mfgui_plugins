@@ -11,4 +11,6 @@ export PLUGINS='{"run_debugger":{"repository":"https://github.com/outerbounds/mf
 ```
 * Restart `metaflow-service`.
 * Navigate to a run in MFGUI.
+* Open the `Details` dropdown.
+* Open the `Debugger for run plugin` dropdown.
 * Open the Javascript Console.
