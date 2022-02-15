@@ -11,4 +11,5 @@ export PLUGINS='{"task_debugger":{"repository":"https://github.com/outerbounds/m
 ```
 * Restart `metaflow-service`.
 * Navigate to a task in MFGUI.
+* Open the `Debugger for task plugin` dropdown.
 * Open the Javascript Console.
