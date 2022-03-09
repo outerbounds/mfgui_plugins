@@ -1,5 +1,5 @@
 const VERSION_INFO = {
-  api: '1.1.0',
+  api: "0.14.0",
 };
 
 const Listeners = [];
@@ -15,7 +15,7 @@ const PluginInfo = {
 function messageHandler(event) {
   if (event.data && event.data.type) {
     switch (event.data.type) {
-      case 'ReadyToRender': {
+      case "ReadyToRender": {
         if (!initialised) {
           Metaflow.parameters = event.data.config;
           Metaflow.resource = event.data.resource;
@@ -27,13 +27,13 @@ function messageHandler(event) {
         }
         return;
       }
-      case 'DataUpdate': {
+      case "DataUpdate": {
         for (const listener of Listeners) {
           listener(event.data);
         }
         return;
       }
-      case 'EventUpdate': {
+      case "EventUpdate": {
         for (const listener of EventListeners) {
           listener(event.data);
         }
@@ -43,7 +43,7 @@ function messageHandler(event) {
   }
 }
 
-window.addEventListener('message', messageHandler);
+window.addEventListener("message", messageHandler);
 
 const Metaflow = {
   parameters: {},
@@ -57,10 +57,10 @@ const Metaflow = {
     window.parent.postMessage(
       {
         name: window.name,
-        type: 'PluginRegisterEvent',
+        type: "PluginRegisterEvent",
         version: VERSION_INFO,
       },
-      '*',
+      "*"
     );
   },
   /**
@@ -79,11 +79,21 @@ const Metaflow = {
    */
   setHeight(fixedHeight) {
     if (fixedHeight) {
-      window.parent.postMessage({ name: window.name, type: 'PluginHeightCheck', height: fixedHeight }, '*');
+      window.parent.postMessage(
+        { name: window.name, type: "PluginHeightCheck", height: fixedHeight },
+        "*"
+      );
     } else {
       const body = document.body;
-      const height = Math.max(body.scrollHeight, body.offsetHeight, body.clientHeight);
-      window.parent.postMessage({ name: window.name, type: 'PluginHeightCheck', height: height }, '*');
+      const height = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        body.clientHeight
+      );
+      window.parent.postMessage(
+        { name: window.name, type: "PluginHeightCheck", height: height },
+        "*"
+      );
     }
   },
   /**
@@ -93,7 +103,10 @@ const Metaflow = {
    */
   subscribe(paths, fn) {
     Listeners.push(fn);
-    window.parent.postMessage({ name: window.name, type: 'PluginSubscribeToData', paths: paths }, '*');
+    window.parent.postMessage(
+      { name: window.name, type: "PluginSubscribeToData", paths: paths },
+      "*"
+    );
   },
   /**
    * Subscribe to events
@@ -102,7 +115,10 @@ const Metaflow = {
    */
   on(events, fn) {
     EventListeners.push(fn);
-    window.parent.postMessage({ name: window.name, type: 'PluginSubscribeToEvent', events: events }, '*');
+    window.parent.postMessage(
+      { name: window.name, type: "PluginSubscribeToEvent", events: events },
+      "*"
+    );
   },
   /**
    * Call event with any name and payload. Other plugins or systems in app might subscribe to these events.
@@ -110,7 +126,10 @@ const Metaflow = {
    * @param {*} data
    */
   call(event, data) {
-    window.parent.postMessage({ name: window.name, type: 'PluginCallEvent', event: event, data: data }, '*');
+    window.parent.postMessage(
+      { name: window.name, type: "PluginCallEvent", event: event, data: data },
+      "*"
+    );
   },
   /**
    * Send notification on main application
@@ -120,11 +139,11 @@ const Metaflow = {
     window.parent.postMessage(
       {
         name: window.name,
-        type: 'PluginCallEvent',
-        event: 'SEND_NOTIFICATION',
+        type: "PluginCallEvent",
+        event: "SEND_NOTIFICATION",
         data: message,
       },
-      '*',
+      "*"
     );
   },
   /**
@@ -135,37 +154,40 @@ const Metaflow = {
     window.parent.postMessage(
       {
         name: window.name,
-        type: 'PluginCallEvent',
-        event: 'UPDATE_PLUGIN',
+        type: "PluginCallEvent",
+        event: "UPDATE_PLUGIN",
         data: {
           slot: PluginInfo.slot,
           name: PluginInfo.manifest.name,
           visible: visible,
         },
       },
-      '*',
+      "*"
     );
   },
   //
   // Request to be removed?
   //
   remove(fn) {
-    window.parent.postMessage({ name: window.name, type: 'PluginRemoveRequest' }, '*');
+    window.parent.postMessage(
+      { name: window.name, type: "PluginRemoveRequest" },
+      "*"
+    );
   },
 
   subscribeToMetadata(fn) {
-    this.subscribe(['metadata'], (event) => fn(event.data));
+    this.subscribe(["metadata"], fn);
   },
 
   subscribeToRunMetadata(fn) {
-    this.subscribe(['run-metadata'], (event) => fn(event.data));
+    this.subscribe(["run-metadata"], fn);
   },
 };
 
-if (typeof exports !== 'undefined') {
+if (typeof exports !== "undefined") {
   exports.Metaflow = Metaflow;
 }
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.Metaflow = Metaflow;
 }

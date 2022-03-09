@@ -50,7 +50,7 @@ const Metaflow = {
   resource: {},
   /**
    * onReady function will be called with basic info like resource ids and custom server parameters.
-   * @param {*} onready 
+   * @param {*} onready
    */
   onReady(onready) {
     onReadyFn = onready;
@@ -65,7 +65,7 @@ const Metaflow = {
   },
   /**
    * Alias for onReady
-   * @param {*} _settings Deprecated settings for register function 
+   * @param {*} _settings Deprecated settings for register function
    * @param {*} onready   Callback to startup plugin.
    */
   register(_settings, onready) {
