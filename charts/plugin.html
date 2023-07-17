@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Graphs</title>
+
+    <script src="MetaflowPluginAPI.js"></script>
+
+    <style type="text/css">
+      .charts {
+        display: flex;
+        align-items: center;
+        gap: 4rem;
+        width: 100%;
+        position: relative;
+      }
+
+      .chart {
+        position: relative;
+        width: 500px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <div class="charts">
+      <div class="chart">
+        <canvas id="cpuChart"></canvas>
+      </div>
+      <div class="chart">
+        <canvas id="memoryChart"></canvas>
+      </div>
+    </div>
+
+    <script>
+      (() => {
+        const charts = [
+          {
+            id: "cpuChart",
+            ctx: undefined,
+            label: "CPU",
+            data: [],
+          },
+          {
+            id: "memoryChart",
+            ctx: undefined,
+            label: "Memory Usage",
+            data: [],
+          },
+        ];
+
+        // Add new data to the chart data
+        const addData = (chart, data) => {
+          chart.data.datasets.forEach((dataset) => {
+            dataset.data.push(...data);
+          });
+          chart.update();
+        };
+
+        // Draw the graphs using the resource info and data from metaflow and BB
+        const drawGraphs = (resource) => {
+          const REFRESH_INTERVAL = 15000; // time between refreshes in ms
+
+          // Data for the graphs
+          const cpuData = [];
+          const memoryData = [];
+
+          let finished = false; // has the task finished
+          let interval; // pointer to setInterval
+          let lastEndTime; // last time requested
+
+          // Get the start and end times for the task
+          const getTimes = async () => {
+            const taskUrl = `/api/flows/${resource.flow_id}/runs/${resource.run_number}/steps/${resource.step_name}/tasks/${resource.task_id}`;
+            let taskResponse;
+            let taskData;
+
+            try {
+              taskResponse = await fetch(taskUrl);
+              taskData = await taskResponse.json();
+            } catch (error) {
+              console.error("error fetching task data: ", error);
+              return false;
+            }
+
+            let startTime;
+            let endTime;
+
+            try {
+              startTime = new Date(taskData.data.started_at).toISOString();
+              endTime = new Date(taskData.data.finished_at).toISOString();
+            } catch (error) {
+              console.error("error getting start and end times: ", error);
+              return false;
+            }
+
+            // If the task has an endTime, it is finished, so stop the interval
+            if (endTime) {
+              finished = true;
+              clearInterval(interval);
+            }
+
+            return [startTime, endTime];
+          };
+
+          // Get the graph data
+          const getData = async () => {
+            let timesResponse;
+            timesResponse = await getTimes(resource, finished, interval);
+            if (!timesResponse) {
+              console.error("error getting times");
+              return false;
+            }
+
+            const [startTime, end] = timesResponse;
+
+            // If no endTime for the task, pull data until the present time
+            const endTime = end ?? new Date().toISOString();
+
+            charts.forEach(async (chart) => {
+              let data;
+              try {
+                const dataResponse = await fetch(
+                  lastEndTime
+                    ? `/bb/v1/chart/data?startTime=${lastEndTime}&endTime=${endTime}`
+                    : `/bb/v1/chart/data?startTime=${startTime}&endTime=${endTime}`
+                );
+                data = await dataResponse.json();
+              } catch (error) {
+                console.error("error fetching graph data: ", error);
+                return false;
+              }
+              lastEndTime = endTime;
+
+              addData(
+                chart.ctx,
+                data.Datapoints.map((item) => ({
+                  x: item.Timestamp,
+                  y: item.Value,
+                }))
+              );
+            });
+          };
+
+          charts.forEach((chart) => {
+            const element = document.getElementById(chart.id);
+
+            chart.ctx = new Chart(element, {
+              type: "line",
+              options: {
+                scales: {
+                  x: {
+                    type: "time",
+                  },
+                },
+                responsive: true,
+              },
+              data: {
+                datasets: [
+                  {
+                    label: chart.label,
+                    data: chart.data,
+                    borderWidth: 1,
+                  },
+                ],
+              },
+            });
+          });
+
+          getData();
+          if (!finished || true) {
+            interval = setInterval(() => {
+              getData();
+            }, 1000);
+          }
+        };
+
+        // Execute plugin code on Metaflow.onReady to make sure that it has required configuration and resource info.
+        Metaflow.onReady((config, resource) => {
+          // Set height for plugin
+          Metaflow.setHeight(300);
+          drawGraphs(resource);
+        });
+      })();
+    </script>
+  </body>
+</html>
